@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using Imageflow.Fluent;
+using System.IO;
 
 namespace Resizer
 {
@@ -10,6 +11,10 @@ namespace Resizer
 
         [Option('w', "width", Required = false, HelpText = "Width of output image.")]
         public uint? Width { get; set; }
+
+        
+        [Option('h',"height", Required = false, HelpText = "Height of output image")]
+        public uint? Height { get; set; }
     }
 
     class Program
@@ -31,19 +36,51 @@ namespace Resizer
             // Options-objektet behöver skapas från args
             // https://github.com/commandlineparser/commandline#quick-start-examples
 
-            
+
             // 1. Skala om en bild beroende på angiven breddparameter
             // 2. Lägg till en höjdparameter och skala om beroende på dessa.
             // 3. Lägg till ett skärpefilter om bildens storlek minskas.
             // 4. Lägg till parametrar för färgmättnad, ljusstyrka och kontrast.
+            Parser.Default.ParseArguments<Options>(args)
+                            .WithParsed<Options>(Run);
         }
 
         static void Run(Options options)
         {
-            using (var job = new ImageJob())
+            using (var stream = File.OpenRead(options.Input))
             {
+                var outputFileName = GetOutputFileNAme(options.Input);
+
+                using (var outStream = new FileStream(outputFileName, FileMode.Create, FileAccess.Write))
+                {
+                    using (var job = new ImageJob())
+                    {
+                        var hints = new ResampleHints
+                        {
+                            SharpenWhen = SharpenWhen.Downscaling,
+                            SharpenPercent = 99
+                        };
+
+                        job.Decode(stream, false)
+                            .ConstrainWithin(options.Width, options.Height, hints)
+                            .ColorFilterSrgb(ColorFilterSrgb.Grayscale_Flat)
+                            .EncodeToStream(outStream, false, new MozJpegEncoder(90))
+                            .Finish()
+                            .InProcessAsync()
+                            .Wait();
+
+                    }
+                }
                 
             }
+            
+        }
+        static string GetOutputFileNAme (string path)
+        {
+            string directory = Path.GetDirectoryName(path);
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string extension = Path.GetExtension(path);
+            return $"{directory}\\{fileName}-resized{extension}";
         }
     }
 }

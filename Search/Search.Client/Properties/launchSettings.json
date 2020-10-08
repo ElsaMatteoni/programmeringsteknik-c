@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Search.Client": {
+      "commandName": "Project",
+      "commandLineArgs": "search -q \"fisk\""
+    }
+  }
+}

@@ -30,9 +30,32 @@ namespace Search.Client
 
             // 1. Hitta 20 recept som innehåller ordet "fisk".
             // 2. Sortera sökträffarna efter rating.
+            var searchResponse = client.Search(
+                s => s.QueryOnQueryString(
+                    options.Query).Sort(
+                    o => o.Descending(
+                        a => a.Rating)).Take(20));
+
             // 3. Räkna alla recept som är upplagda av Per Morberg.
+            var morbergSearch = client.Count(
+                search => search.Query(
+                    query => query.Match(
+                        match => match.Field(
+                            field => field.Author).Query("Per Morberg"))));
+
             // 4. Hitta 30 recept som tillhör kategorin Bönor.
+            var beanSearch = client.Search(
+                s => s.Query(
+                    query => query.Match(
+                        match => match.Field(
+                            field => field.Categories).Query("Bönor"))).Take(30));
+
             // 5. Räkna alla recept som har en tillagningstid på under 10 minuter (tips: TimeSpan lagras som ticks i index).
+            var timeCount = client.Count(
+                count => count.Query(
+                    query => query.Range(
+                        match => match.Field(
+                            field => field.TimeToCook).LessThan(TimeSpan.FromMinutes(10).Ticks))));
 
             return 0;
         }

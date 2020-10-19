@@ -17,11 +17,12 @@ namespace Users.Common.Services
         /// <summary>
         /// Validates a password by specified parameters
         /// </summary>
+        /// <param name="password">The password in characters</param>
         /// <param name="length">Length of the password in characters</param>
         /// <param name="capitalLetters">Amount of capital letters</param>
         /// <param name="numbers">Amount of numbers</param>
         /// <param name="specialChars">Amount of special characters</param>
         /// <returns>A response indicating success or failure.</returns>
-        IServiceResponse ValidatePassword(uint length, uint capitalLetters = 1, uint numbers = 1, uint specialChars = 1);
+        IServiceResponse ValidatePassword(string password, uint length, uint capitalLetters = 1, uint numbers = 1, uint specialChars = 1);
     }
 }

@@ -17,19 +17,19 @@ namespace Pwd.Cmd
             Console.WriteLine("___________________\n");
             Console.Write("How many characters do you want your password to be? ");
             var characterInput = Console.ReadLine();
-            var passwordLength = uint.Parse(characterInput);
+            uint passwordLength = 8;
 
             Console.Write("How many uppercase letters? ");
             var uppercaseInput = Console.ReadLine();
-            var uppercaseCount = uint.Parse(uppercaseInput);
+            uint uppercaseCount = 2;
 
             Console.Write("How many numbers? ");
             var numbersInput = Console.ReadLine();
-            var numberCount = uint.Parse(numbersInput);
+            uint numberCount = 2;
 
             Console.Write("How many special characters? ");
             var specialInput = Console.ReadLine();
-            var specialCount = uint.Parse(specialInput);
+            uint specialCount = 1;
 
             var passwordGenerator = new PasswordService();
             var password = passwordGenerator.GeneratePassword(passwordLength, uppercaseCount, numberCount, specialCount);

@@ -8,7 +8,6 @@ namespace Users.Common.Models
         string Name { get; set; }
         string Email { get; set; }
         string Phone { get; set; }
-
         bool SubscribeToNewsletter { get; set; }
     }
 }
